@@ -37,6 +37,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include <cstdlib>
 #include <cstring>
 #include <thread>
+#include <string_view>
 
 #include "ability.h"
 #include "common/vana_time.h"
@@ -181,17 +182,18 @@ int32 do_init(int32 argc, char** argv)
 
     for (int i = 1; i < argc; i++)
     {
-        if (strcmp(argv[i], "--ip") == 0)
+        using namespace std::string_view_literals; 
+        if ("--ip"sv == argv[i])
         {
             uint32 ip = 0;
             inet_pton(AF_INET, argv[i + 1], &ip);
             map_ip.s_addr = ip;
         }
-        else if (strcmp(argv[i], "--port") == 0)
+        else if ("port"sv == argv[i])
         {
             map_port = std::stoi(argv[i + 1]);
         }
-        else if (strcmp(argv[i], "--load_all") == 0)
+        else if ("load_all"sv == argv[i])
         {
             gLoadAllLua = true;
         }
@@ -1258,36 +1260,36 @@ int32 map_garbage_collect(time_point tick, CTaskMgr::CTask* PTask)
 
 void log_init(int argc, char** argv)
 {
+    using namespace std::literals;
     std::string logFile;
 #ifdef DEBUGLOGMAP
 #ifdef WIN32
-    logFile = "log\\map-server.log";
+    logFile = "log\\map-server.log"s;
 #else
-    logFile = "log/map-server.log";
+    logFile = "log/map-server.log"s;
 #endif
 #endif
     bool defaultname = true;
     bool appendDate{};
     for (int i = 1; i < argc; i++)
     {
-        if (strcmp(argv[i], "--ip") == 0 && defaultname)
+        if (defaultname && "--ip"sv == argv[i])
         {
             logFile = argv[i + 1];
         }
-        else if (strcmp(argv[i], "--port") == 0 && defaultname)
+        else if (defaultname && "--port"sv == argv[i])
         {
             logFile.append(argv[i + 1]);
         }
-        else if (strcmp(argv[i], "--log") == 0)
+        else if (defaultname && "--log"sv == argv[i])
         {
             defaultname = false;
             logFile     = argv[i + 1];
         }
-
-        if (strcmp(argv[i], "--append-date") == 0)
+        else if ("--append-date"sv == argv[i])
         {
             appendDate = true;
         }
     }
-    logging::InitializeLog("map", logFile, appendDate);
+    logging::InitializeLog("map", std::string{logFile}, appendDate);
 }
