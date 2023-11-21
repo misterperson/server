@@ -123,14 +123,10 @@ namespace
 map_session_data_t* mapsession_getbyipp(uint64 ipp)
 {
     TracyZoneScoped;
-    map_session_list_t::iterator i = map_session_list.begin();
-    while (i != map_session_list.end())
+    if(map_session_list_t::const_iterator ci = map_session_list.find(ipp);
+        ci != map_session_list.cend())
     {
-        if ((*i).first == ipp)
-        {
-            return (*i).second;
-        }
-        ++i;
+        return ci->second();
     }
     return nullptr;
 }
