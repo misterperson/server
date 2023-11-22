@@ -1,4 +1,4 @@
-﻿/*
+/*
 ===========================================================================
 
   Copyright (c) 2010-2015 Darkstar Dev Teams
@@ -95,7 +95,7 @@ bool matches(std::string const& target, std::string const& pattern, std::string 
 bool starts_with(std::string const& target, std::string const& pattern);
 auto replace(std::string const& target, std::string const& search, std::string const& replace) -> std::string;
 
-look_t stringToLook(std::string str);
+look_t stringToLook(std::string_view str);
 
 // Float tools
 // https://stackoverflow.com/a/253874

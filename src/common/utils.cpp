@@ -1,4 +1,4 @@
-﻿/*
+/*
 ===========================================================================
 
   Copyright (c) 2010-2015 Darkstar Dev Teams
@@ -891,7 +891,7 @@ std::string replace(std::string const& target, std::string const& search, std::s
     return "";
 }
 
-look_t stringToLook(std::string str)
+look_t stringToLook(std::string_view str)
 {
     look_t out{};
 
