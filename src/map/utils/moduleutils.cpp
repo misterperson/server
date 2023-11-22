@@ -1,4 +1,4 @@
-﻿/*
+/*
 ===========================================================================
 
   Copyright (c) 2021 LandSandBoat Dev Teams
@@ -162,7 +162,7 @@ namespace moduleutils
         {
             if (std::filesystem::is_directory(entry))
             {
-                for (auto const& innerEntry : sorted_directory_iterator<std::filesystem::recursive_directory_iterator>(entry))
+                for (auto const& innerEntry : sorted_directories(std::filesystem::recursive_directory_iterator{ entry }))
                 {
                     auto path = innerEntry.relative_path();
                     expandedList.emplace_back(path.generic_string());

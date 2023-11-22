@@ -106,15 +106,12 @@ bool definitelyLessThan(float a, float b);
 
 void crash();
 
-template <typename T>
-std::set<std::filesystem::path> sorted_directory_iterator(std::string path_name)
+template <class Range>
+std::set<std::filesystem::path> sorted_directories(Range&& r)
 {
-    std::set<std::filesystem::path> sorted_by_name;
-    for (auto& entry : T(path_name))
-    {
-        sorted_by_name.insert(entry.path());
-    }
-    return sorted_by_name;
+    using std::begin;
+    using std::end;
+    return { begin(r), end(r) };
 }
 
 #endif

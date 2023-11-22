@@ -99,6 +99,8 @@
 #include "utils/zoneutils.h"
 #include "weapon_skill.h"
 
+namespace fs = std::filesystem;
+
 void ReportErrorToPlayer(CBaseEntity* PEntity, std::string const& message = "") noexcept
 {
     try
@@ -259,7 +261,7 @@ namespace luautils
         lua.safe_script_file("./scripts/globals/common.lua");
 
         // Load global enums
-        for (auto const& entry : sorted_directory_iterator<std::filesystem::directory_iterator>("./scripts/enum"))
+        for (auto const& entry : sorted_directories(fs::directory_iterator{"./scripts/enum"}))
         {
             if (entry.extension() == ".lua")
             {
@@ -279,7 +281,7 @@ namespace luautils
         PopulateIDLookupsByFilename();
 
         // Then the rest...
-        for (auto const& entry : sorted_directory_iterator<std::filesystem::recursive_directory_iterator>("./scripts/globals"))
+        for (auto const& entry : sorted_directories(fs::recursive_directory_iterator{"./scripts/globals"}))
         {
             if (entry.extension() == ".lua")
             {
@@ -297,7 +299,7 @@ namespace luautils
         }
 
         // Load Commands
-        for (auto const& entry : sorted_directory_iterator<std::filesystem::directory_iterator>("./scripts/commands"))
+        for (auto const& entry : sorted_directories(fs::directory_iterator{"./scripts/commands"}))
         {
             if (entry.extension() == ".lua")
             {
@@ -308,7 +310,7 @@ namespace luautils
         if (gLoadAllLua) // Load all lua files (for sanity testing, no need for during regular use)
         {
             ShowInfo("*** CI ONLY: Smoke testing by running all Lua files. ***")
-            for (auto const& entry : sorted_directory_iterator<std::filesystem::recursive_directory_iterator>("./scripts"))
+            for (auto const& entry : sorted_directories(fs::recursive_directory_iterator{"./scripts"}))
             {
                 // If we try to reload IDs.lua files, we'll wipe out the results
                 // of GetFirstID() calls, so lets skip over those.
@@ -380,7 +382,7 @@ namespace luautils
     {
         std::set<std::string> filenames; // For de-duping
 
-        std::filesystem::path path;
+        fs::path path;
         while (filewatcher->modifiedQueue.try_dequeue(path))
         {
             if (path.extension() == ".lua")
@@ -408,7 +410,7 @@ namespace luautils
         // "scripts/battlefields/(zone)/(filename).lua"
         auto scrapeSubdir = [&](std::string const& subFolder) -> void
         {
-            for (auto const& entry : sorted_directory_iterator<std::filesystem::recursive_directory_iterator>(subFolder))
+            for (auto const& entry : sorted_directories(fs::recursive_directory_iterator{subFolder}))
             {
                 auto path = entry.relative_path();
 
@@ -418,7 +420,7 @@ namespace luautils
 
                 bool isHelpersFile = path.filename() == "helpers.lua";
 
-                if (!std::filesystem::is_directory(path) &&
+                if (!fs::is_directory(path) &&
                     path.extension() == ".lua" &&
                     depth == 4 &&
                     !isHelpersFile)
@@ -559,7 +561,7 @@ namespace luautils
         TracyZoneScoped;
         TracyZoneString(filename);
 
-        auto path = std::filesystem::path(filename);
+        auto path = fs::path(filename);
         if (path.empty() || path.extension() == "")
         {
             return;
@@ -707,7 +709,7 @@ namespace luautils
             return;
         }
 
-        if (!std::filesystem::exists(filename))
+        if (!fs::exists(filename))
         {
             ShowTrace("luautils::CacheLuaObjectFromFile: File does not exist: %s", filename);
             return;
@@ -766,7 +768,7 @@ namespace luautils
         }
 
         // Handle filename -> path conversion
-        std::filesystem::path    path(filename);
+        fs::path                 path(filename);
         std::vector<std::string> parts;
         for (auto part : path)
         {
@@ -992,9 +994,9 @@ namespace luautils
         if (!maybeFilename)
         {
             // Pre-load all zone/IDs files so we can pre-populate their GetFirstID lookups
-            for (auto const& zoneDirEntry : sorted_directory_iterator<std::filesystem::directory_iterator>("./scripts/zones"))
+            for (auto const& zoneDirEntry : sorted_directories(fs::directory_iterator{"./scripts/zones"}))
             {
-                for (auto const& fileEntry : sorted_directory_iterator<std::filesystem::directory_iterator>(zoneDirEntry.relative_path().generic_string()))
+                for (auto const& fileEntry : sorted_directories(fs::directory_iterator{zoneDirEntry}))
                 {
                     if (fileEntry.stem() == "IDs")
                     {
