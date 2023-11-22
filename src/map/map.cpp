@@ -489,7 +489,7 @@ void ReportTracyStats()
  *                                                                       *
  ************************************************************************/
 
-int32 do_sockets(fd_set* rfd, duration next)
+int32 do_sockets(fd_set& rfd, duration next)
 {
     message::handle_incoming();
 
@@ -499,9 +499,9 @@ int32 do_sockets(fd_set* rfd, duration next)
     timeval timeout{ cr::duration_cast<dur_tvsec>(next).count(),
                      cr::duration_cast<dur_tvusec>(next % 1s).count() };
     int32   ret = 0;
-    *rfd        = readfds;
+    rfd         = readfds;
 
-    ret = sSelect(fd_max, rfd, nullptr, nullptr, &timeout);
+    ret = sSelect(fd_max, &rfd, nullptr, nullptr, &timeout);
     if (ret == SOCKET_ERROR)
     {
         if (sErrno != S_EINTR)
@@ -514,7 +514,7 @@ int32 do_sockets(fd_set* rfd, duration next)
 
     last_tick = time(nullptr);
 
-    if (sFD_ISSET(map_fd, rfd))
+    if (sFD_ISSET(map_fd, &rfd))
     {
         struct sockaddr_in from
         {

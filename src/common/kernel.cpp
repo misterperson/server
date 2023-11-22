@@ -276,7 +276,7 @@ int main(int argc, char** argv)
         while (gRunFlag)
         {
             next = CTaskMgr::getInstance()->DoTimer(server_clock::now());
-            do_sockets(&rfd, next);
+            do_sockets(rfd, next);
             watchdog.update();
         }
     }

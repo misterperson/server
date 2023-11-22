@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2015 Darkstar Dev Teams
+// Copyright (c) 2010-2015 Darkstar Dev Teams
 
 #ifndef _SOCKET_H_
 #define _SOCKET_H_
@@ -155,7 +155,7 @@ extern time_t stall_time;
 
 int32 makeConnection(uint32 ip, uint16 port, int32 type);
 
-int32 do_sockets(fd_set* rfd, duration next);
+int32 do_sockets(fd_set& rfd, duration next);
 
 void do_close(int32 fd);
 
