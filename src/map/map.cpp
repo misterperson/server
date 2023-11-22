@@ -497,6 +497,7 @@ int32 do_sockets(fd_set* rfd, duration next)
     timeval timeout{ cr::duration_cast<cr::seconds>(next).count(),
                      cr::duration_cast<cr::microseconds>(next % 1s).count() };
     int32   ret = 0;
+    *rfd        = readfds;
 
     ret = sSelect(fd_max, rfd, nullptr, nullptr, &timeout);
     if (ret == SOCKET_ERROR)
