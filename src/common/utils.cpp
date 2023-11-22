@@ -636,10 +636,10 @@ void PackSoultrapperName(std::string name, uint8 output[])
 {
     // Before anything else, sanitize the name string
     // If contains underscore character
-    if (std::find(name.begin(), name.end(), '_') != name.end())
+    if (auto i = std::find(name.begin(), name.end(), '_'); i != name.end())
     {
         // Remove underscores
-        name.erase(std::remove(name.begin(), name.end(), '_'), name.end());
+        name.erase(std::remove(i, name.end(), '_'), name.end());
     }
 
     // Add a space at the end to help with name truncation
