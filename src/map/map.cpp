@@ -1,4 +1,4 @@
-﻿/*
+/*
 ===========================================================================
 
 Copyright (c) 2010-2015 Darkstar Dev Teams
@@ -36,7 +36,8 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <thread>
+
+#include <filesystem>
 #include <string_view>
 
 #include "ability.h"
@@ -124,10 +125,10 @@ namespace
 map_session_data_t* mapsession_getbyipp(uint64 ipp)
 {
     TracyZoneScoped;
-    if(map_session_list_t::const_iterator ci = map_session_list.find(ipp);
+    if (auto ci = map_session_list.find(ipp);
         ci != map_session_list.cend())
     {
-        return ci->second();
+        return ci->second;
     }
     return nullptr;
 }
@@ -182,7 +183,7 @@ int32 do_init(int32 argc, char** argv)
 
     for (int i = 1; i < argc; i++)
     {
-        using namespace std::string_view_literals; 
+        using namespace std::string_view_literals;
         if ("--ip"sv == argv[i])
         {
             uint32 ip = 0;
@@ -418,11 +419,8 @@ void do_final(int code)
     luautils::cleanup();
     logging::ShutDown();
 
-#ifdef WIN32
-    shutdown(map_fd, SD_SEND);
-#else
     shutdown(map_fd, SHUT_WR);
-#endif
+
     close(map_fd);
 
     if (code != EXIT_SUCCESS)
@@ -1260,19 +1258,15 @@ int32 map_garbage_collect(time_point tick, CTaskMgr::CTask* PTask)
 
 void log_init(int argc, char** argv)
 {
-    using namespace std::literals;
-    std::string logFile;
+    std::filesystem::path logFile{};
 #ifdef DEBUGLOGMAP
-#ifdef WIN32
-    logFile = "log\\map-server.log"s;
-#else
-    logFile = "log/map-server.log"s;
-#endif
+    logFile = std::filesystem::path{ "log" } / "map-server.log";
 #endif
     bool defaultname = true;
     bool appendDate{};
     for (int i = 1; i < argc; i++)
     {
+        using namespace std::string_view_literals;
         if (defaultname && "--ip"sv == argv[i])
         {
             logFile = argv[i + 1];
@@ -1291,5 +1285,5 @@ void log_init(int argc, char** argv)
             appendDate = true;
         }
     }
-    logging::InitializeLog("map", std::string{logFile}, appendDate);
+    logging::InitializeLog("map", logFile.string(), appendDate);
 }
