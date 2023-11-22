@@ -493,14 +493,10 @@ int32 do_sockets(fd_set* rfd, duration next)
 {
     message::handle_incoming();
 
-    struct timeval timeout
-    {
-    };
-    int32 ret = 0;
-    memcpy(rfd, &readfds, sizeof(*rfd));
-
-    timeout.tv_sec  = std::chrono::duration_cast<std::chrono::seconds>(next).count();
-    timeout.tv_usec = std::chrono::duration_cast<std::chrono::microseconds>(next - std::chrono::duration_cast<std::chrono::seconds>(next)).count();
+    namespace cr = std::chrono;
+    timeval timeout{ cr::duration_cast<cr::seconds>(next).count(),
+                     cr::duration_cast<cr::microseconds>(next % 1s).count() };
+    int32   ret = 0;
 
     ret = sSelect(fd_max, rfd, nullptr, nullptr, &timeout);
     if (ret == SOCKET_ERROR)
