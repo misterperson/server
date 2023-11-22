@@ -1,4 +1,4 @@
-﻿/*
+/*
 ===========================================================================
 
   Copyright (c) 2010-2015 Darkstar Dev Teams
@@ -150,12 +150,18 @@ static void sig_proc(int sn)
         case SIGINT:
         case SIGTERM:
             gRunFlag = false;
+            if (gConsoleService)
+            {
             gConsoleService->stop();
+            }
             break;
         case SIGABRT:
         case SIGSEGV:
         case SIGFPE:
+            if (gConsoleService)
+            {
             gConsoleService->stop();
+            }
             dump_backtrace();
             do_abort();
 #ifdef _WIN32
