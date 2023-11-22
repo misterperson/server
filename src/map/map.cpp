@@ -38,7 +38,9 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include <cstring>
 
 #include <filesystem>
+#include <ratio>
 #include <string_view>
+#include <thread>
 
 #include "ability.h"
 #include "common/vana_time.h"
