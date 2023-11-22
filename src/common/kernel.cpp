@@ -1,4 +1,4 @@
-/*
+﻿/*
 ===========================================================================
 
   Copyright (c) 2010-2015 Darkstar Dev Teams
@@ -152,7 +152,7 @@ static void sig_proc(int sn)
             gRunFlag = false;
             if (gConsoleService)
             {
-            gConsoleService->stop();
+                gConsoleService->stop();
             }
             break;
         case SIGABRT:
@@ -160,7 +160,7 @@ static void sig_proc(int sn)
         case SIGFPE:
             if (gConsoleService)
             {
-            gConsoleService->stop();
+                gConsoleService->stop();
             }
             dump_backtrace();
             do_abort();
