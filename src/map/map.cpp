@@ -493,9 +493,11 @@ int32 do_sockets(fd_set* rfd, duration next)
 {
     message::handle_incoming();
 
-    namespace cr = std::chrono;
-    timeval timeout{ cr::duration_cast<cr::seconds>(next).count(),
-                     cr::duration_cast<cr::microseconds>(next % 1s).count() };
+    namespace cr     = std::chrono;
+    using dur_tvsec  = cr::duration<decltype(timeval::tv_sec)>;
+    using dur_tvusec = cr::duration<decltype(timeval::tv_usec), std::micro>;
+    timeval timeout{ cr::duration_cast<dur_tvsec>(next).count(),
+                     cr::duration_cast<dur_tvusec>(next % 1s).count() };
     int32   ret = 0;
     *rfd        = readfds;
 
